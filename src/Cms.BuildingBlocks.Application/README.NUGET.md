@@ -2,7 +2,9 @@
 
 Reusable **Application Building Blocks** for .NET 10+ projects implementing **Clean Architecture**, **DDD**, and optional **CQRS**.
 
-[![NuGet](https://img.shields.io/nuget/v/Cms.BuildingBlocks.Application.svg)](https://www.nuget.org/packages/Cms.BuildingBlocks.Application/)
+![NuGet](https://img.shields.io/nuget/v/Cms.BuildingBlocks.Application)
+![Downloads](https://img.shields.io/nuget/dt/Cms.BuildingBlocks.Application)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
 ## Features
 

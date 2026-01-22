@@ -2,6 +2,12 @@
 
 Reusable **Application Building Blocks** for .NET projects using **Clean Architecture**, **DDD**, and optional **CQRS** patterns.
 
+[![CI](https://github.com/cmssantos/buildingblocks-application/actions/workflows/ci.yml/badge.svg)](https://github.com/cmssantos/buildingblocks-application/actions/workflows/ci.yml)
+[![Release](https://github.com/cmssantos/buildingblocks-application/actions/workflows/release.yml/badge.svg)](https://github.com/cmssantos/buildingblocks-application/actions/workflows/release.yml)
+![NuGet](https://img.shields.io/nuget/v/Cms.BuildingBlocks.Application)
+![Downloads](https://img.shields.io/nuget/dt/Cms.BuildingBlocks.Application)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
 This library provides:
 
 - Core utilities: `Result`, `DomainError`, `Guard`, `Normalizer`, `IDateTimeProvider`
