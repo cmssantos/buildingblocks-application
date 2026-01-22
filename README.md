@@ -9,37 +9,6 @@ This library provides:
 - Event dispatching: `IDomainEvent`, `IDomainEventDispatcher`
 - Optional CQRS layer: `ICommand`, `IQuery`, `ICommandHandler`, `IQueryHandler`, `ICqrsDispatcher`
 
-## Project Structure
-
-```
-Cms.BuildingBlocks.Application
-├─ Core
-│   ├─ Common
-│   │   ├─ Result.cs
-│   │   ├─ DomainError.cs
-│   │   ├─ Guard.cs
-│   │   └─ Normalizer.cs
-│   ├─ Persistence
-│   │   ├─ IRepository<T>.cs
-│   │   └─ IUnitOfWork.cs
-│   ├─ Events
-│   │   ├─ IDomainEvent.cs
-│   │   └─ IDomainEventDispatcher.cs
-│   └─ Utils
-│       └─ DateTimeProvider.cs
-├─ CQRS
-│   ├─ Commands
-│   │   ├─ ICommand.cs
-│   │   └─ ICommandHandler.cs
-│   ├─ Queries
-│   │   ├─ IQuery.cs
-│   │   └─ IQueryHandler.cs
-│   └─ Messaging
-│       ├─ ICqrsDispatcher.cs
-│       ├─ CqrsDispatcher.cs
-│       └─ CqrsDispatcherExtensions.cs
-```
-
 ## Installation
 
 Add the NuGet package (after publishing):
