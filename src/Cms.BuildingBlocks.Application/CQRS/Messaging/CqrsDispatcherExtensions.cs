@@ -19,7 +19,8 @@ public static class CqrsDispatcherExtensions
         {
             var commandHandlers = assembly.GetTypes()
                 .Where(t => t.GetInterfaces().Any(i =>
-                    i.IsGenericType && i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)))
+                    i.IsGenericType &&
+                    i.GetGenericTypeDefinition() == typeof(ICommandHandler<,>)))
                 .ToList();
 
             foreach (Type? handler in commandHandlers)
