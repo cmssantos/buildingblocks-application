@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net10.0</TargetFrameworks>
+
+    <PackageId>Cms.BuildingBlocks.Application</PackageId>
+    <Description>
+        Reusable Application Layer building blocks for .NET applications implementing use-cases,
+        application services, DTOs, input/output ports, mapping, validation, and orchestration
+        to support Clean Architecture and Domain-Driven Design (DDD).
+    </Description>
+
+    <Authors>Cleudice Santos</Authors>
+    <Company>CMS</Company>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/cmssantos/buildingblocks-application</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+
+    <PackageTags>ddd application building-blocks building-blocks-application clean-architecture dotnet</PackageTags>
+
+    <!-- NuGet Gallery -->
+    <PackageReadmeFile>README.NUGET.md</PackageReadmeFile>
+
+    <!-- Packaging -->
+    <IsPackable>true</IsPackable>
+
+    <!-- Symbols (CORRETO) -->
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+
+    <!-- NÃO empacotar no build -->
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <!-- ========================= -->
+  <!-- NuGet README -->
+  <!-- ========================= -->
+  <ItemGroup>
+    <None Include="README.NUGET.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- ========================= -->
+  <!-- Analyzers (dev-only) -->
+  <!-- ========================= -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Application Layer Dependencies -->
+    <PackageReference Include="Cms.BuildingBlocks.Domain" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+  </ItemGroup>
+
+</Project>

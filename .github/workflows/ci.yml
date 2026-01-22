@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+env:
+  COVERLET_MIN_THRESHOLD: 80
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test with Coverage
+        run: |
+          dotnet test tests/Cms.BuildingBlocks.Application.Tests \
+            --configuration Release \
+            --no-build \
+            --collect:"XPlat Code Coverage"
+
+      - name: Check Coverage Threshold
+        run: |
+          FILE=$(find . -name "*.cobertura.xml" | head -n1)
+          RATE=$(grep -oP 'line-rate="\K[0-9.]+' "$FILE")
+          PERCENT=$(echo "$RATE * 100 / 1" | bc)
+          echo "Coverage: $PERCENT%"
+          if [ "$PERCENT" -lt $COVERLET_MIN_THRESHOLD ]; then
+            echo "Coverage below threshold"
+            exit 1
+          fi
+
+      - name: Install Codecov
+        run: |
+          curl -Os https://uploader.codecov.io/latest/linux/codecov
+          chmod +x codecov
+          sudo mv codecov /usr/local/bin/
+
+      - name: Upload Coverage to Codecov
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: |
+          FILE=$(find . -name "*.cobertura.xml" | head -n1)
+          codecov -f "$FILE"

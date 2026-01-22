@@ -1,0 +1,17 @@
+<Project>
+  <ItemGroup>
+    <!-- Test SDK -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <!-- xUnit v2 stack coerente -->
+    <PackageVersion Include="xunit" Version="2.9.3" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
+    <PackageVersion Include="Shouldly" Version="4.2.1" />
+    <!-- Coverage -->
+    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
+    <!-- Analyzers -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102" />
+    <!-- Application Layer Dependencies (centralized) -->
+    <PackageVersion Include="Cms.BuildingBlocks.Domain" Version="1.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
+  </ItemGroup>
+</Project>
