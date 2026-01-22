@@ -4,7 +4,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace Cms.BuildingBlocks.Application.Tests.Utils;
+namespace Cms.BuildingBlocks.Application.Tests.Core.Utils;
 
 public class SystemDateTimeProviderTests
 {

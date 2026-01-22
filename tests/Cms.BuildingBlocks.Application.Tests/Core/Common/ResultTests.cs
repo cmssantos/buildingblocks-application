@@ -5,7 +5,7 @@ using Shouldly;
 
 using Xunit;
 
-namespace Cms.BuildingBlocks.Application.Tests.Common;
+namespace Cms.BuildingBlocks.Application.Tests.Core.Common;
 
 public class ResultTests
 {
