@@ -8,30 +8,57 @@ Reusable **Application Building Blocks** for .NET projects using **Clean Archite
 ![Downloads](https://img.shields.io/nuget/dt/Cms.BuildingBlocks.Application)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-This library provides:
+---
 
-- Core utilities: `Result`, `DomainError`, `Guard`, `Normalizer`, `IDateTimeProvider`
-- Persistence abstractions: `IRepository<T>`, `IUnitOfWork`
-- Event dispatching: `IDomainEvent`, `IDomainEventDispatcher`
-- Optional CQRS layer: `ICommand`, `IQuery`, `ICommandHandler`, `IQueryHandler`, `ICqrsDispatcher`
+## 🎯 Purpose
 
-## Installation
+This package provides **application-layer abstractions** focused on
+**use cases orchestration**, **business flow control**, and
+**infrastructure decoupling**, without leaking technical concerns
+into the Domain layer.
 
-Add the NuGet package (after publishing):
+It is designed to be reusable across **monoliths, modular monoliths,
+and microservices**.
+
+---
+
+## ✨ What This Library Provides
+
+- Core utilities:
+  - `Result`, `DomainError`
+  - `Guard`, `Normalizer`
+  - `IDateTimeProvider`
+- Persistence abstractions:
+  - `IRepository<TAggregate, TId>`
+  - `IUserOwnedRepository<TAggregate, TId, TOwnerId>`
+  - `IUnitOfWork`
+- Event dispatching:
+  - `IDomainEvent`
+  - `IDomainEventDispatcher`
+- Optional CQRS layer:
+  - `ICommand`, `IQuery`
+  - `ICommandHandler`, `IQueryHandler`
+  - `ICqrsDispatcher`
+
+---
+
+## 📦 Installation
 
 ```bash
 dotnet add package Cms.BuildingBlocks.Application
 ```
 
-Or via PackageReference:
+Or via `PackageReference`:
 
 ```xml
 <PackageReference Include="Cms.BuildingBlocks.Application" Version="x.y.z" />
 ```
 
-## Usage
+---
 
-### Core
+## 🧩 Usage
+
+### Core Utilities
 
 ```csharp
 using Cms.BuildingBlocks.Application.Core.Common;
@@ -47,30 +74,75 @@ var success = Result<int>.Success(42);
 var failure = Result<int>.Failure(new DomainError("Something went wrong"));
 ```
 
-### Persistence
+---
+
+### Persistence — Global Aggregate
+
+Use `IRepository` for aggregates that are **not scoped to a specific owner**.
 
 ```csharp
 using Cms.BuildingBlocks.Application.Core.Persistence;
 
-public class MyService
+public class CreateSystemSettingHandler
 {
-    private readonly IRepository<MyAggregate> _repository;
+    private readonly IRepository<SystemSetting, SystemSettingId> _repository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public MyService(IRepository<MyAggregate> repository, IUnitOfWork unitOfWork)
+    public CreateSystemSettingHandler(
+        IRepository<SystemSetting, SystemSettingId> repository,
+        IUnitOfWork unitOfWork)
     {
         _repository = repository;
         _unitOfWork = unitOfWork;
     }
 
-    public async Task DoSomethingAsync()
+    public async Task Handle(SystemSetting setting, CancellationToken ct)
     {
-        var entity = new MyAggregate();
-        await _repository.AddAsync(entity);
-        await _unitOfWork.CommitAsync();
+        await _repository.AddAsync(setting, ct);
+        await _unitOfWork.CommitAsync(ct);
     }
 }
 ```
+
+---
+
+### Persistence — User / Tenant Owned Aggregate
+
+Use `IUserOwnedRepository` when the aggregate lifecycle and visibility
+are bound to a **user**, **account**, or **tenant**.
+
+```csharp
+using Cms.BuildingBlocks.Application.Core.Persistence;
+
+public class DeleteCategoryHandler
+{
+    private readonly IUserOwnedRepository<Category, CategoryId, UserId> _repository;
+    private readonly IUnitOfWork _unitOfWork;
+
+    public DeleteCategoryHandler(
+        IUserOwnedRepository<Category, CategoryId, UserId> repository,
+        IUnitOfWork unitOfWork)
+    {
+        _repository = repository;
+        _unitOfWork = unitOfWork;
+    }
+
+    public async Task Handle(
+        CategoryId categoryId,
+        UserId userId,
+        CancellationToken ct)
+    {
+        var category = await _repository.GetByIdAsync(categoryId, userId, ct);
+        if (category is null)
+            throw new NotFoundException(nameof(Category), categoryId.Value);
+
+        await _repository.DeleteAsync(category, ct);
+        await _unitOfWork.CommitAsync(ct);
+    }
+}
+```
+
+---
 
 ### CQRS (Optional)
 
@@ -78,32 +150,56 @@ public class MyService
 using Cms.BuildingBlocks.Application.CQRS.Commands;
 using Cms.BuildingBlocks.Application.CQRS.Messaging;
 
-// Define command and handler
 public record TestCommand(string Message) : ICommand<string>;
 
-public class TestCommandHandler : ICommandHandler<TestCommand, string>
+public class TestCommandHandler
+    : ICommandHandler<TestCommand, string>
 {
-    public Task<string> Handle(TestCommand command, CancellationToken ct)
+    public Task<string> Handle(
+        TestCommand command,
+        CancellationToken ct)
         => Task.FromResult($"Processed {command.Message}");
 }
-
-// Register dispatcher and handlers
-var services = new ServiceCollection();
-services.AddCqrsDispatcher(typeof(TestCommandHandler).Assembly);
-var provider = services.BuildServiceProvider();
-
-var dispatcher = provider.GetRequiredService<ICqrsDispatcher>();
-var result = await dispatcher.SendCommandAsync(new TestCommand("Hello"));
 ```
 
-## Contributing
+---
 
-- Follow **Clean Architecture** and **DDD principles**.
-- Add tests using **xUnit + Shouldly**.
-- Ensure all **Core and CQRS abstractions** are reusable and decoupled from infrastructure.
+## 🧭 Naming Guidelines (Important)
 
-## License
+This library intentionally uses **`OwnerId`** instead of `UserId`
+in generic abstractions.
 
-MIT License
+### Why `OwnerId`?
+
+- Works for **User-based systems**
+- Works for **Tenant-based SaaS**
+- Works for **Account / Organization ownership**
+- Avoids coupling abstractions to authentication models
+
+👉 In concrete services:
+- Use `UserId`, `TenantId`, `AccountId`, etc.
+- Bind them to `TOwnerId`
+
+Example:
+
+```csharp
+IUserOwnedRepository<Category, CategoryId, UserId>
+IUserOwnedRepository<Project, ProjectId, TenantId>
+```
+
+This maximizes **reuse without semantic leakage**.
 
 ---
+
+## 🤝 Contributing
+
+- Follow **Clean Architecture** and **DDD principles**
+- Add tests using **xUnit + Shouldly**
+- Keep Application abstractions free from infrastructure details
+- Favor explicit contracts over implicit conventions
+
+---
+
+## 📜 License
+
+MIT License

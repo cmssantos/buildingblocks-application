@@ -11,7 +11,7 @@
     <!-- Analyzers -->
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.102" />
     <!-- Application Layer Dependencies (centralized) -->
-    <PackageVersion Include="Cms.BuildingBlocks.Domain" Version="1.0.2" />
+    <PackageVersion Include="Cms.BuildingBlocks.Domain" Version="1.1.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.2" />
   </ItemGroup>
 </Project>
